@@ -73,8 +73,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useTheme } from '../lib/useTheme'
-import { useSettingsStore } from '../store'
+import { useTheme, useSettingsStore } from '../lib'
 import { invoke } from '@tauri-apps/api/core'
 
 const { locale } = useI18n()

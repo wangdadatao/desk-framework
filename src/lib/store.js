@@ -5,7 +5,13 @@ import { invoke } from '@tauri-apps/api/core'
 // 创建 Pinia 实例
 export const pinia = createPinia()
 
-// 定义设置存储
+/**
+ * 应用设置存储
+ * 管理应用的全局设置，包括：
+ * - 语言偏好
+ * - 主题模式
+ * - 开机自启动
+ */
 export const useSettingsStore = defineStore('settings', {
   state: () => ({
     language: 'zh-CN',
@@ -29,16 +35,35 @@ export const useSettingsStore = defineStore('settings', {
     async loadSettings() {
       this.loading = true
       try {
-        const settings = await invoke('get_settings')
-        this.language = settings.language
-        this.themeMode = settings.theme_mode.toLowerCase()
-        this.startAtLogin = settings.start_at_login
+        // 尝试从后端获取设置
+        try {
+          const settings = await invoke('get_settings')
+          this.language = settings.language
+          this.themeMode = settings.theme_mode.toLowerCase()
+          this.startAtLogin = settings.start_at_login
+        } catch (error) {
+          console.warn('无法从后端加载设置，使用默认值:', error)
+          // 使用默认值
+          this.language = localStorage.getItem('app-locale') || 'zh-CN'
+          this.themeMode = localStorage.getItem('app-theme') || 'system'
+          this.startAtLogin = false
+        }
         
         // 获取系统主题
-        this.isSystemDarkTheme = await invoke('get_system_theme')
+        try {
+          this.isSystemDarkTheme = await invoke('get_system_theme')
+        } catch (error) {
+          console.warn('无法检测系统主题:', error)
+          // 使用媒体查询作为后备
+          this.isSystemDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+        }
         
-        // 检查自动启动状态并同步
-        this.checkAutoLaunchStatus()
+        // 检查自动启动状态并同步 (可选，如果失败不终止)
+        try {
+          await this.checkAutoLaunchStatus()
+        } catch (error) {
+          console.warn('无法检查自动启动状态:', error)
+        }
         
         // 应用主题
         this.applyTheme()
@@ -83,6 +108,9 @@ export const useSettingsStore = defineStore('settings', {
     },
     
     applyTheme() {
+      // 保存主题设置到本地存储
+      localStorage.setItem('app-theme', this.themeMode)
+      
       if (this.isDarkTheme) {
         document.documentElement.classList.add('dark')
       } else {
@@ -100,7 +128,7 @@ export const useSettingsStore = defineStore('settings', {
           await this.saveSettings()
         }
       } catch (error) {
-        console.error('Failed to check autolaunch status:', error)
+        console.warn('无法检查自动启动状态:', error)
       }
     },
     
@@ -115,3 +143,5 @@ export const useSettingsStore = defineStore('settings', {
     }
   }
 })
+
+// 可以在这里添加更多的 store，例如用户状态、应用数据等

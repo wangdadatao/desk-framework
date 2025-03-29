@@ -22,7 +22,7 @@
 
 <script setup>
 import { onMounted } from 'vue'
-import { useSettingsStore } from './store'
+import { useSettingsStore } from './lib'
 import SidebarMenu from './components/SidebarMenu.vue'
 import TitleBar from './components/TitleBar.vue'
 
@@ -30,6 +30,12 @@ const settingsStore = useSettingsStore()
 
 onMounted(async () => {
   // 加载设置并应用主题
-  await settingsStore.loadSettings()
+  try {
+    await settingsStore.loadSettings()
+  } catch (error) {
+    console.error('初始化设置失败:', error)
+    // 确保至少应用默认主题
+    settingsStore.applyTheme()
+  }
 })
 </script>

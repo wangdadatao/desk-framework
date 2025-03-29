@@ -1,9 +1,9 @@
 import { createApp } from 'vue'
 import './style.css'
 import App from './App.vue'
+import { pinia } from './lib/store'
+import router from './lib/router'
 import i18n from './i18n'
-import router from './router'
-import { pinia } from './store'
 
 // 安装全局错误处理
 window.addEventListener('error', (event) => {
