@@ -73,7 +73,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useTheme } from '../composables/useTheme'
+import { useTheme } from '../lib/useTheme'
 import { useSettingsStore } from '../store'
 import { invoke } from '@tauri-apps/api/core'
 

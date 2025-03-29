@@ -76,7 +76,7 @@
   <script setup>
   import { ref, onMounted } from 'vue';
   import { invoke } from '@tauri-apps/api/core';
-  import { useTheme } from '../composables/useTheme';
+  import { useTheme } from '../lib/useTheme';
   import { 
     X as XIcon, 
     Minus as MinusIcon, 

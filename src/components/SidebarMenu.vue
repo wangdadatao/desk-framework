@@ -45,7 +45,7 @@
 import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import * as LucideIcons from 'lucide-vue-next'
-import { useTheme } from '../composables/useTheme'
+import { useTheme } from '../lib/useTheme'
 
 const router = useRouter()
 const { isDark } = useTheme()
