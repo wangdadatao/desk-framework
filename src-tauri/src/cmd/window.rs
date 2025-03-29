@@ -12,17 +12,27 @@ pub fn minimize_window<R: Runtime>(window: Window<R>) -> Result<(), String> {
 pub fn maximize_window<R: Runtime>(window: Window<R>) -> Result<(), String> {
     let is_mac = env::consts::OS == "macos";
     
-    if window.is_maximized().unwrap_or(false) {
-        window
-            .unmaximize()
-            .map_err(|e| format!("Failed to unmaximize window: {}", e))
+    if is_mac {
+        // 在 macOS 上，处理全屏模式
+        let is_fullscreen = window.is_fullscreen().unwrap_or(false);
+        
+        if is_fullscreen {
+            // 如果当前是全屏，恢复到正常窗口
+            window
+                .set_fullscreen(false)
+                .map_err(|e| format!("Failed to exit fullscreen: {}", e))
+        } else {
+            // 如果不是全屏，切换到全屏
+            window
+                .set_fullscreen(true)
+                .map_err(|e| format!("Failed to enter fullscreen: {}", e))
+        }
     } else {
-        if is_mac {
-            // 在 macOS 上，使用全屏而不是最大化以解决标题栏问题
-            if let Err(e) = window.set_fullscreen(true) {
-                return Err(format!("Failed to set fullscreen: {}", e));
-            }
-            Ok(())
+        // Windows/Linux 使用正常的最大化
+        if window.is_maximized().unwrap_or(false) {
+            window
+                .unmaximize()
+                .map_err(|e| format!("Failed to unmaximize window: {}", e))
         } else {
             window
                 .maximize()
@@ -44,8 +54,11 @@ pub fn is_window_maximized<R: Runtime>(window: Window<R>) -> Result<bool, String
     
     if is_mac {
         // 在 macOS 上，检查是否全屏
-        Ok(window.is_fullscreen().unwrap_or(false))
+        window
+            .is_fullscreen()
+            .map_err(|e| format!("Failed to determine if window is fullscreen: {}", e))
     } else {
+        // 在其他平台上，检查是否最大化
         window
             .is_maximized()
             .map_err(|e| format!("Failed to determine if window is maximized: {}", e))
