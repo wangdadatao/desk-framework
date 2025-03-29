@@ -15,7 +15,6 @@ pub enum ThemeMode {
 pub struct AppSettings {
     pub language: String,
     pub theme_mode: ThemeMode,
-    pub auto_update: bool,
     pub start_at_login: bool,
 }
 
@@ -24,7 +23,6 @@ impl Default for AppSettings {
         Self {
             language: "zh-CN".to_string(),
             theme_mode: ThemeMode::System,
-            auto_update: true,
             start_at_login: false,
         }
     }

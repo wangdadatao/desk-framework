@@ -10,7 +10,6 @@ export const useSettingsStore = defineStore('settings', {
   state: () => ({
     language: 'zh-CN',
     themeMode: 'system', // 'light', 'dark', 'system'
-    autoUpdate: true,
     startAtLogin: false,
     loading: false,
     isSystemDarkTheme: false
@@ -33,7 +32,6 @@ export const useSettingsStore = defineStore('settings', {
         const settings = await invoke('get_settings')
         this.language = settings.language
         this.themeMode = settings.theme_mode.toLowerCase()
-        this.autoUpdate = settings.auto_update
         this.startAtLogin = settings.start_at_login
         
         // 获取系统主题
@@ -57,7 +55,6 @@ export const useSettingsStore = defineStore('settings', {
       const settings = {
         language: this.language,
         theme_mode: themeMode,
-        auto_update: this.autoUpdate,
         start_at_login: this.startAtLogin
       }
       
@@ -93,7 +90,7 @@ export const useSettingsStore = defineStore('settings', {
       }
     },
     
-    // 新增: 检查自动启动状态
+    // 检查自动启动状态
     async checkAutoLaunchStatus() {
       try {
         const isEnabled = await invoke('check_autolaunch')
@@ -107,7 +104,7 @@ export const useSettingsStore = defineStore('settings', {
       }
     },
     
-    // 新增: 设置自动启动
+    // 设置自动启动
     async setAutoLaunch(enable) {
       try {
         await invoke('set_autolaunch', { enable })

@@ -97,6 +97,7 @@ desk-framework/
 │   └── tauri.conf.json      # Tauri 配置
 ├── index.html               # HTML 入口
 ├── package.json             # npm 配置
+├── postcss.config.js        # 
 ├── tailwind.config.js       # Tailwind CSS 配置
 └── vite.config.js           # Vite 配置
 ```

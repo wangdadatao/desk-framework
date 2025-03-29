@@ -23,22 +23,6 @@
               </select>
             </div>
             
-            <!-- 自动更新开关 -->
-            <div class="flex justify-between items-center">
-              <div>
-                <p class="text-sm font-medium">{{ $t('settings.autoUpdate') }}</p>
-                <p class="text-xs text-muted-foreground">{{ $t('settings.autoUpdateDesc') }}</p>
-              </div>
-              <button 
-                @click="toggleAutoUpdate" 
-                class="w-12 h-6 rounded-full relative" 
-                :class="settings.auto_update ? 'bg-primary' : 'bg-secondary'"
-              >
-                <span class="w-5 h-5 rounded-full bg-white absolute top-0.5 transition-all" 
-                      :class="settings.auto_update ? 'left-7' : 'left-0.5'"></span>
-              </button>
-            </div>
-            
             <!-- 开机启动开关 -->
             <div class="flex justify-between items-center">
               <div>
@@ -100,14 +84,12 @@ const settingsStore = useSettingsStore()
 const selectedLanguage = ref('zh-CN')
 const selectedTheme = ref('system')
 const settings = reactive({
-  auto_update: true,
   language: 'zh-CN'
 })
 
 onMounted(async () => {
   try {
     const savedSettings = await invoke('get_settings')
-    settings.auto_update = savedSettings.auto_update
     settings.language = savedSettings.language
     selectedLanguage.value = settings.language
     locale.value = settings.language
@@ -129,7 +111,6 @@ async function saveSettings() {
     const settingsData = {
       language: settings.language,
       theme_mode: themeModeCap,
-      auto_update: settings.auto_update,
       start_at_login: settingsStore.startAtLogin
     }
     
@@ -137,12 +118,6 @@ async function saveSettings() {
   } catch (error) {
     console.error('Error saving settings:', error)
   }
-}
-
-function toggleAutoUpdate() {
-  settings.auto_update = !settings.auto_update
-  settingsStore.autoUpdate = settings.auto_update
-  saveSettings()
 }
 
 async function toggleStartAtLogin() {

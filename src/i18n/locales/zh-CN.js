@@ -43,8 +43,6 @@ export default {
     themeLight: '浅色',
     themeDark: '深色',
     themeSystem: '跟随系统',
-    autoUpdate: '自动更新',
-    autoUpdateDesc: '启用应用自动更新',
     startAtLogin: '启动时打开',
     startAtLoginDesc: '开机时自动启动应用',
     language: '语言',

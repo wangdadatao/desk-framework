@@ -43,8 +43,6 @@ export default {
     themeLight: 'Light',
     themeDark: 'Dark',
     themeSystem: 'System',
-    autoUpdate: 'Auto Update',
-    autoUpdateDesc: 'Enable automatic app updates',
     startAtLogin: 'Start at Login',
     startAtLoginDesc: 'Automatically start app at login',
     language: 'Language',
