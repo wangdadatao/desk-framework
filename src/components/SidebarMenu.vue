@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full border-r border-border/40 w-64 p-3 flex flex-col" 
+  <div class="h-full border-r border-border/40 w-64 p-3 flex flex-col select-none" 
        :class="isDark ? 'bg-[#1e1e1e]' : 'bg-[rgb(245,245,245)]'">
     <!-- App Logo/Title -->
     <div class="flex items-center justify-center py-4">
@@ -16,7 +16,7 @@
             custom
           >
             <button 
-              class="w-full text-left px-3 py-2 rounded-lg flex items-center gap-3"
+              class="w-full text-left px-3 py-2 rounded-lg flex items-center gap-3 select-none"
               :class="[
                 isActive ? 'bg-primary/10 text-primary' : '', 
                 isDark ? 'hover:bg-[rgba(255,255,255,0.1)]' : 'hover:bg-white/80'
@@ -58,3 +58,13 @@ function getIcon(iconName) {
   return LucideIcons[iconName] || LucideIcons.FileIcon
 }
 </script>
+
+<style scoped>
+/* 防止文本选中 */
+.select-none {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+</style>

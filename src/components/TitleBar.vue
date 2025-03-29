@@ -11,6 +11,7 @@
         <button 
           @click="closeWindow" 
           class="w-3 h-3 rounded-full bg-red-500 hover:bg-red-600 flex items-center justify-center group"
+          data-tauri-drag-false
         >
           <XIcon class="h-2 w-2 text-red-800 opacity-0 group-hover:opacity-100" />
         </button>
@@ -18,6 +19,7 @@
         <button 
           @click="minimizeWindow" 
           class="w-3 h-3 rounded-full bg-yellow-500 hover:bg-yellow-600 flex items-center justify-center group"
+          data-tauri-drag-false
         >
           <MinusIcon class="h-2 w-2 text-yellow-800 opacity-0 group-hover:opacity-100" />
         </button>
@@ -25,6 +27,7 @@
         <button 
           @click="toggleMaximize" 
           class="w-3 h-3 rounded-full bg-green-500 hover:bg-green-600 flex items-center justify-center group"
+          data-tauri-drag-false
         >
           <component 
             :is="isMaximized ? MinimizeIcon : MaximizeIcon" 
@@ -46,6 +49,7 @@
           @click="minimizeWindow" 
           class="h-8 w-12 flex items-center justify-center"
           :class="isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-200'"
+          data-tauri-drag-false
         >
           <MinusIcon class="h-4 w-4" />
         </button>
@@ -54,6 +58,7 @@
           @click="toggleMaximize" 
           class="h-8 w-12 flex items-center justify-center"
           :class="isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-200'"
+          data-tauri-drag-false
         >
           <component :is="isMaximized ? MinimizeIcon : MaximizeIcon" class="h-4 w-4" />
         </button>
@@ -61,6 +66,7 @@
         <button 
           @click="closeWindow" 
           class="h-8 w-12 flex items-center justify-center hover:bg-red-500 hover:text-white"
+          data-tauri-drag-false
         >
           <XIcon class="h-4 w-4" />
         </button>
@@ -127,9 +133,11 @@ async function closeWindow() {
 <style scoped>
 [data-tauri-drag-region] {
   -webkit-app-region: drag;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
-button {
+[data-tauri-drag-false] {
   -webkit-app-region: no-drag;
 }
 </style>

@@ -65,6 +65,20 @@ html, body {
   @apply bg-background rounded-lg overflow-hidden;
 }
 
+/* 按钮和标题栏无法拖拽 */
+button, [role="button"] {
+  -webkit-app-region: no-drag !important;
+}
+
+/* 全局禁止文本选择 */
+.select-none, 
+.sidebar-menu,
+[data-tauri-drag-region],
+.menu-item {
+  -webkit-user-select: none !important;
+  user-select: none !important;
+}
+
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -81,9 +95,4 @@ html, body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 0, 0, 0.3);
-}
-
-/* 让应用内所有按钮禁止拖拽窗口 */
-button {
-  -webkit-app-region: no-drag;
 }
