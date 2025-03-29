@@ -132,12 +132,23 @@ async function closeWindow() {
 
 <style scoped>
 [data-tauri-drag-region] {
-  -webkit-app-region: drag;
+  -webkit-app-region: drag !important;
   -webkit-user-select: none;
   user-select: none;
+  cursor: move;
 }
 
 [data-tauri-drag-false] {
-  -webkit-app-region: no-drag;
+  -webkit-app-region: no-drag !important;
+  cursor: default;
+}
+
+/* 确保所有子元素也应用相同的规则 */
+[data-tauri-drag-region] * {
+  -webkit-app-region: drag !important;
+}
+
+[data-tauri-drag-false] * {
+  -webkit-app-region: no-drag !important;
 }
 </style>

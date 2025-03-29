@@ -19,12 +19,15 @@
         "center": true,
         "resizable": true,
         "decorations": false,
-        "transparent": true
+        "transparent": true,
+        "fullscreen": false,
+        "hiddenTitle": true
       }
     ],
     "security": {
       "csp": null
-    }
+    },
+    "macOSPrivateApi": true
   },
   "bundle": {
     "active": true,
