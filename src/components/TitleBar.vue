@@ -1,15 +1,13 @@
 <template>
-  <!-- 将 data-tauri-drag-region 应用到整个标题栏容器 -->
-  <!-- 用户点击这个容器的任何非交互部分都应该能拖动 -->
-  <div class="flex h-10 select-none relative" data-tauri-drag-region>
+  <!-- 重新添加 data-tauri-drag-region 属性，同时保持 z-index -->
+  <div class="flex h-10 select-none relative titlebar-container" data-tauri-drag-region>
     <!-- 左侧区域 -->
-    <!-- 注意：移除了 z-10，除非有特定布局需要，否则通常不需要 -->
     <div
-      class="w-64 flex items-center justify-start px-4 relative"
+      class="w-64 flex items-center justify-start px-4 relative drag-region"
       :class="isDark ? 'bg-[#1e1e1e]' : 'bg-[rgb(245,245,245)]'"
+      data-tauri-drag-region
     >
       <!-- Mac 风格控制按钮 -->
-      <!-- 这个 div 包含按钮，使用 no-drag 类阻止它本身触发拖动 -->
       <div v-if="isMac" class="flex items-center gap-2 no-drag">
         <button @click="closeWindow" class="w-3 h-3 rounded-full bg-red-500 hover:bg-red-600 flex items-center justify-center group">
           <XIcon class="h-2 w-2 text-red-800 opacity-0 group-hover:opacity-100" />
@@ -27,13 +25,12 @@
     </div>
 
     <!-- 右侧区域 -->
-    <!-- 注意：移除了 z-10 -->
     <div
-      class="flex-1 flex items-center justify-end px-4 backdrop-blur-lg relative"
+      class="flex-1 flex items-center justify-end px-4 backdrop-blur-lg relative drag-region"
       :class="isDark ? 'bg-background/90' : 'bg-background/90'"
+      data-tauri-drag-region
     >
       <!-- Windows 风格控制按钮 -->
-      <!-- 这个 div 包含按钮，使用 no-drag 类阻止它本身触发拖动 -->
       <div v-if="!isMac" class="flex items-center no-drag">
         <button @click="minimizeWindow" class="h-8 w-12 flex items-center justify-center" :class="isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-200'">
           <MinusIcon class="h-4 w-4" />
@@ -48,6 +45,7 @@
     </div>
   </div>
 </template>
+
 <script setup>
 import { ref, onMounted } from 'vue';
 import { invoke } from '@tauri-apps/api/core';
@@ -66,11 +64,8 @@ const { isDark } = useTheme();
 
 onMounted(async () => {
   try {
-    // 获取操作系统信息
     osInfo.value = await invoke('get_os_info');
     isMac.value = osInfo.value.family === 'mac';
-    
-    // 获取窗口状态
     isMaximized.value = await invoke('is_window_maximized');
   } catch (error) {
     console.error('Error initializing title bar:', error);
@@ -104,9 +99,20 @@ async function closeWindow() {
 </script>
 
 <style scoped>
-
+/* 明确设置拖动区域样式 */
+.titlebar-container,
+.drag-region,
 [data-tauri-drag-region] {
+  -webkit-app-region: drag;
+  app-region: drag;
   user-select: none;
+}
+
+/* 确保按钮不可拖动但可点击 */
+.no-drag,
+button {
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
 }
 
 @media (pointer: fine) {
@@ -114,5 +120,4 @@ async function closeWindow() {
     cursor: default !important;
   }
 }
-
 </style>
