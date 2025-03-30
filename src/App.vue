@@ -1,6 +1,6 @@
 <template>
   <div class="h-screen w-full flex flex-col overflow-hidden bg-background text-foreground">
-    <!-- 自定义标题栏 -->
+    <!-- 使用独立的TitleBar组件 -->
     <TitleBar />
 
     <div class="flex flex-1 overflow-hidden">
@@ -39,3 +39,4 @@ onMounted(async () => {
   }
 })
 </script>
+
