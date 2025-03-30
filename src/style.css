@@ -55,35 +55,13 @@ html, body {
   min-width: 320px;
   min-height: 100vh;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  overflow: hidden;
 }
 
 #app {
   width: 100%;
   height: 100vh;
   /* 添加圆角和阴影，提供更像Mac的窗口感觉 */
-  @apply bg-background rounded-lg overflow-hidden;
-}
-
-/* 强化拖拽区域样式，特别针对 macOS */
-[data-tauri-drag-region] {
-  -webkit-app-region: drag !important;
-  -webkit-user-select: none !important;
-  user-select: none !important;
-  cursor: default !important; /* 修复 Mac 上光标问题 */
-}
-
-/* 确保按钮、输入框等不可拖拽 */
-button, 
-[role="button"], 
-select, 
-input, 
-textarea,
-a, 
-.no-drag, 
-.no-drag * {
-  -webkit-app-region: no-drag !important;
-  cursor: default;
+  @apply bg-background;
 }
 
 /* 全局禁止文本选择 */

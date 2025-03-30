@@ -1,4 +1,4 @@
-use tauri::{Runtime, Window, Manager};
+use tauri::{Runtime, Window};
 use std::env;
 
 #[tauri::command]

@@ -1,78 +1,53 @@
 <template>
-  <div class="flex h-10 select-none relative">
-    <!-- 拖动区域 (跨平台通用) -->
-    <div 
-      class="absolute inset-0"
-      data-tauri-drag-region
-    ></div>
-
+  <!-- 将 data-tauri-drag-region 应用到整个标题栏容器 -->
+  <!-- 用户点击这个容器的任何非交互部分都应该能拖动 -->
+  <div class="flex h-10 select-none relative" data-tauri-drag-region>
     <!-- 左侧区域 -->
-    <div 
-      class="w-64 flex items-center justify-start px-4 relative z-10"
+    <!-- 注意：移除了 z-10，除非有特定布局需要，否则通常不需要 -->
+    <div
+      class="w-64 flex items-center justify-start px-4 relative"
       :class="isDark ? 'bg-[#1e1e1e]' : 'bg-[rgb(245,245,245)]'"
     >
       <!-- Mac 风格控制按钮 -->
+      <!-- 这个 div 包含按钮，使用 no-drag 类阻止它本身触发拖动 -->
       <div v-if="isMac" class="flex items-center gap-2 no-drag">
-        <button 
-          @click="closeWindow" 
-          class="w-3 h-3 rounded-full bg-red-500 hover:bg-red-600 flex items-center justify-center group"
-        >
+        <button @click="closeWindow" class="w-3 h-3 rounded-full bg-red-500 hover:bg-red-600 flex items-center justify-center group">
           <XIcon class="h-2 w-2 text-red-800 opacity-0 group-hover:opacity-100" />
         </button>
-        
-        <button 
-          @click="minimizeWindow" 
-          class="w-3 h-3 rounded-full bg-yellow-500 hover:bg-yellow-600 flex items-center justify-center group"
-        >
+        <button @click="minimizeWindow" class="w-3 h-3 rounded-full bg-yellow-500 hover:bg-yellow-600 flex items-center justify-center group">
           <MinusIcon class="h-2 w-2 text-yellow-800 opacity-0 group-hover:opacity-100" />
         </button>
-        
-        <button 
-          @click="toggleMaximize" 
-          class="w-3 h-3 rounded-full bg-green-500 hover:bg-green-600 flex items-center justify-center group"
-        >
-          <component 
-            :is="isMaximized ? MinimizeIcon : MaximizeIcon" 
-            class="h-2 w-2 text-green-800 opacity-0 group-hover:opacity-100" 
+        <button @click="toggleMaximize" class="w-3 h-3 rounded-full bg-green-500 hover:bg-green-600 flex items-center justify-center group">
+          <component
+            :is="isMaximized ? MinimizeIcon : MaximizeIcon"
+            class="h-2 w-2 text-green-800 opacity-0 group-hover:opacity-100"
           />
         </button>
       </div>
     </div>
-    
+
     <!-- 右侧区域 -->
-    <div 
-      class="flex-1 flex items-center justify-end px-4 backdrop-blur-lg relative z-10"
+    <!-- 注意：移除了 z-10 -->
+    <div
+      class="flex-1 flex items-center justify-end px-4 backdrop-blur-lg relative"
       :class="isDark ? 'bg-background/90' : 'bg-background/90'"
     >
       <!-- Windows 风格控制按钮 -->
+      <!-- 这个 div 包含按钮，使用 no-drag 类阻止它本身触发拖动 -->
       <div v-if="!isMac" class="flex items-center no-drag">
-        <button 
-          @click="minimizeWindow" 
-          class="h-8 w-12 flex items-center justify-center"
-          :class="isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-200'"
-        >
+        <button @click="minimizeWindow" class="h-8 w-12 flex items-center justify-center" :class="isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-200'">
           <MinusIcon class="h-4 w-4" />
         </button>
-        
-        <button 
-          @click="toggleMaximize" 
-          class="h-8 w-12 flex items-center justify-center"
-          :class="isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-200'"
-        >
+        <button @click="toggleMaximize" class="h-8 w-12 flex items-center justify-center" :class="isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-200'">
           <component :is="isMaximized ? MinimizeIcon : MaximizeIcon" class="h-4 w-4" />
         </button>
-        
-        <button 
-          @click="closeWindow" 
-          class="h-8 w-12 flex items-center justify-center hover:bg-red-500 hover:text-white"
-        >
+        <button @click="closeWindow" class="h-8 w-12 flex items-center justify-center hover:bg-red-500 hover:text-white">
           <XIcon class="h-4 w-4" />
         </button>
       </div>
     </div>
   </div>
 </template>
-
 <script setup>
 import { ref, onMounted } from 'vue';
 import { invoke } from '@tauri-apps/api/core';
@@ -129,13 +104,9 @@ async function closeWindow() {
 </script>
 
 <style scoped>
-[data-tauri-drag-region] {
-  -webkit-app-region: drag;
-  user-select: none;
-}
 
-.no-drag, .no-drag * {
-  -webkit-app-region: no-drag;
+[data-tauri-drag-region] {
+  user-select: none;
 }
 
 @media (pointer: fine) {
@@ -144,7 +115,4 @@ async function closeWindow() {
   }
 }
 
-button, button * {
-  -webkit-app-region: no-drag;
-}
 </style>
