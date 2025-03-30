@@ -11,16 +11,14 @@ pub fn minimize_window<R: Runtime>(window: Window<R>) -> Result<(), String> {
 #[tauri::command]
 pub fn maximize_window<R: Runtime>(window: Window<R>) -> Result<(), String> {
     let is_mac = env::consts::OS == "macos";
-    
     if is_mac {
-        // macOS上使用普通的maximize而不是全屏，以防止系统标题栏出现
-        if window.is_maximized().unwrap_or(false) {
-            window.unmaximize().map_err(|e| format!("Failed to unmaximize window: {}", e))
+        let is_fullscreen = window.is_fullscreen().unwrap_or(false);
+        if is_fullscreen {
+            window.set_fullscreen(false).map_err(|e| format!("Failed to exit fullscreen: {}", e))
         } else {
-            window.maximize().map_err(|e| format!("Failed to maximize window: {}", e))
+            window.set_fullscreen(true).map_err(|e| format!("Failed to enter fullscreen: {}", e))
         }
     } else {
-        // Windows和Linux上的处理不变
         if window.is_maximized().unwrap_or(false) {
             window.unmaximize().map_err(|e| format!("Failed to unmaximize window: {}", e))
         } else {
@@ -38,10 +36,19 @@ pub fn close_window<R: Runtime>(window: Window<R>) -> Result<(), String> {
 
 #[tauri::command]
 pub fn is_window_maximized<R: Runtime>(window: Window<R>) -> Result<bool, String> {
-    // 对所有平台都使用is_maximized
-    window
-        .is_maximized()
-        .map_err(|e| format!("Failed to determine if window is maximized: {}", e))
+    let is_mac = env::consts::OS == "macos";
+    
+    if is_mac {
+        // 在 macOS 上，检查是否全屏
+        window
+            .is_fullscreen()
+            .map_err(|e| format!("Failed to determine if window is fullscreen: {}", e))
+    } else {
+        // 在其他平台上，检查是否最大化
+        window
+            .is_maximized()
+            .map_err(|e| format!("Failed to determine if window is maximized: {}", e))
+    }
 }
 
 #[tauri::command]
@@ -60,3 +67,4 @@ pub fn get_os_info() -> serde_json::Value {
         "version": env::consts::ARCH,
     })
 }
+
