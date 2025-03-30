@@ -1,22 +1,30 @@
 <template>
-  <!-- 简单标题栏 -->
-  <div class="h-10 flex items-center justify-between px-4" data-tauri-drag-region>
-    <!-- 左侧 -->
-    <div class="flex items-center">
-      <span class="text-sm font-medium">Desk Framework</span>
+  <!-- 标题栏容器 -->
+  <div class="flex h-10 select-none" data-tauri-drag-region>
+    <!-- 左侧区域 - 固定宽度，与菜单宽度相同 -->
+    <div 
+      class="w-64 flex items-center justify-start px-4" 
+      data-tauri-drag-region
+      :class="isDark ? 'bg-[#1e1e1e]' : 'bg-[rgb(245,245,245)]'"
+    >
     </div>
     
-    <!-- 右侧 -->
-    <div class="flex items-center gap-2">
-      <button @click="minimizeWindow" class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-200 dark:hover:bg-gray-700">
-        <span class="text-lg">-</span>
-      </button>
-      <button @click="toggleMaximize" class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-200 dark:hover:bg-gray-700">
-        <span class="text-lg">□</span>
-      </button>
-      <button @click="closeWindow" class="w-8 h-8 flex items-center justify-center rounded hover:bg-red-500 hover:text-white">
-        <span class="text-lg">×</span>
-      </button>
+    <!-- 右侧区域 - 自适应宽度，与内容区域背景一致 -->
+    <div 
+      class="flex-1 flex items-center justify-end px-4 bg-background" 
+      data-tauri-drag-region
+    >
+      <div class="flex items-center gap-2">
+        <button @click="minimizeWindow" class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-200 dark:hover:bg-gray-700">
+          <span class="text-lg">-</span>
+        </button>
+        <button @click="toggleMaximize" class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-200 dark:hover:bg-gray-700">
+          <span class="text-lg">□</span>
+        </button>
+        <button @click="closeWindow" class="w-8 h-8 flex items-center justify-center rounded hover:bg-red-500 hover:text-white">
+          <span class="text-lg">×</span>
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -24,8 +32,10 @@
 <script setup>
 import { ref } from 'vue'
 import { invoke } from '@tauri-apps/api/core'
+import { useTheme } from '../lib/useTheme'
 
 const isMaximized = ref(false)
+const { isDark } = useTheme()
 
 // 窗口控制函数
 async function minimizeWindow() {
@@ -56,13 +66,11 @@ async function closeWindow() {
 
 <style scoped>
 [data-tauri-drag-region] {
-  -webkit-app-region: drag;
   app-region: drag;
   user-select: none;
 }
 
 button {
-  -webkit-app-region: no-drag;
   app-region: no-drag;
 }
 </style>
