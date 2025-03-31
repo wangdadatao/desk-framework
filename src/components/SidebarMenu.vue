@@ -1,6 +1,5 @@
 <template>
-  <div class="h-full border-r border-border/40 w-64 p-3 flex flex-col select-none" 
-       :class="isDark ? 'bg-[#1e1e1e]' : 'bg-[rgb(245,245,245)]'">
+  <div class="h-full border-r border-border/40 w-64 p-3 flex flex-col select-none sidebar-bg">
     <!-- App Logo/Title -->
     <div class="flex items-center justify-center py-4">
       <h2 class="font-semibold text-lg">Desk Framework</h2>
@@ -66,5 +65,10 @@ function getIcon(iconName) {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+
+/* 使用全局定义的侧边栏背景色 */
+.sidebar-bg {
+  background-color: var(--sidebar-background);
 }
 </style>

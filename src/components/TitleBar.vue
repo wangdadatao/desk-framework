@@ -3,9 +3,8 @@
   <div class="flex h-10 select-none" data-tauri-drag-region>
     <!-- 左侧区域 - 固定宽度，与菜单宽度相同 -->
     <div 
-      class="w-64 flex items-center px-4 border-r-0" 
+      class="w-64 flex items-center px-4 border-r-0 sidebar-bg" 
       data-tauri-drag-region
-      :class="isDark ? 'bg-[#1e1e1e]' : 'bg-[rgb(245,245,245)]'"
     >
       <!-- macOS/Linux 风格控制按钮 -->
       <div v-if="isMacOrLinux" class="flex items-center gap-2 no-drag">
@@ -110,5 +109,18 @@ async function closeWindow() {
 .no-drag,
 button {
   app-region: no-drag;
+}
+
+/* 使用与SidebarMenu相同的背景色样式 */
+.sidebar-bg {
+  background-color: var(--sidebar-background);
+}
+
+:root {
+  --sidebar-background: rgb(245, 245, 245);
+}
+
+:root.dark {
+  --sidebar-background: #1e1e1e;
 }
 </style>

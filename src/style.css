@@ -24,6 +24,9 @@
     --input: 0 0% 89.8%;
     --ring: 0 0% 73%;
     --radius: 8px;
+
+    /* 侧边栏和标题栏背景色 */
+    --sidebar-background: rgb(245, 245, 245);
   }
 
   .dark {
@@ -46,6 +49,9 @@
     --border: 0 0% 14.9%;
     --input: 0 0% 14.9%;
     --ring: 0 0% 83.1%;
+
+    /* 暗色模式下的侧边栏和标题栏背景色 */
+    --sidebar-background: #1e1e1e;
   }
 }
 
