@@ -2,7 +2,7 @@
 
 一个基于 Tauri + Vue 3 的现代桌面应用开发框架，集成了多种实用功能，让桌面应用开发变得简单高效。
 
-![Desk Framework 截图](./screenshots/preview.png)
+![Desk Framework 截图](./screenshots/home.png)
 
 ## ✨ 功能特点
 
@@ -135,6 +135,13 @@ desk-framework/
 1. 在 src/pages 目录中创建新页面组件
 2. 在 src/router/index.js 中添加路由配置
 3. 在 src/i18n/locales 中为新页面添加翻译
+
+
+## 截图
+
+![Desk Framework 设置页面](./screenshots/settings.png)
+
+
 
 ## 📄 许可证
 MIT
