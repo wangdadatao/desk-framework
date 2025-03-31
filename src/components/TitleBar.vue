@@ -3,7 +3,7 @@
   <div class="flex h-10 select-none" data-tauri-drag-region>
     <!-- 左侧区域 - 固定宽度，与菜单宽度相同 -->
     <div 
-      class="w-64 flex items-center px-4" 
+      class="w-64 flex items-center px-4 border-r-0" 
       data-tauri-drag-region
       :class="isDark ? 'bg-[#1e1e1e]' : 'bg-[rgb(245,245,245)]'"
     >
@@ -26,8 +26,9 @@
     
     <!-- 右侧区域 - 自适应宽度，与内容区域背景一致 -->
     <div 
-      class="flex-1 flex items-center justify-end px-4 bg-background" 
+      class="flex-1 flex items-center justify-end px-4 bg-background border-l border-border/40" 
       data-tauri-drag-region
+      style="margin-left: -1px"
     >
       <!-- Windows 风格控制按钮 -->
       <div v-if="!isMacOrLinux" class="flex items-center no-drag">
