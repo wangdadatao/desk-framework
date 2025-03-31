@@ -8,10 +8,15 @@
  * node scripts/init-project.js "My App" "A beautiful app" "Your Name" "com.example.myapp"
  */
 
-const fs = require('fs');
-const path = require('path');
-const { execSync } = require('child_process');
-const readline = require('readline');
+import fs from 'fs';
+import path from 'path';
+import { execSync } from 'child_process';
+import readline from 'readline';
+import { fileURLToPath } from 'url';
+
+// 获取当前文件的目录路径
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -83,6 +88,9 @@ async function main() {
     
     // 4. 更新应用标题
     updateAppTitle(rootDir, newProjectName);
+    
+    // 5. 更新 main.rs 中的库引用
+    updateMainRs(rootDir, projectNameSlug);
     
     console.log('\n✅ 项目初始化完成！');
     console.log('\n可以开始使用以下命令运行您的项目:');
@@ -184,6 +192,25 @@ function updateAppTitle(rootDir, projectName) {
     
     fs.writeFileSync(appVuePath, appVueContent);
   }
+}
+
+// 更新 main.rs
+function updateMainRs(rootDir, projectNameSlug) {
+  console.log('📝 正在更新 main.rs...');
+  
+  const mainRsPath = path.join(rootDir, 'src-tauri', 'src', 'main.rs');
+  let mainRsContent = fs.readFileSync(mainRsPath, 'utf8');
+  
+  // 将连字符替换为下划线，以符合 Rust 命名规范
+  const libNameSlug = projectNameSlug.replace(/-/g, '_');
+  
+  // 替换库名引用
+  mainRsContent = mainRsContent.replace(
+    /desk_framework_lib::run\(\)/,
+    `${libNameSlug}_lib::run()`
+  );
+  
+  fs.writeFileSync(mainRsPath, mainRsContent);
 }
 
 // 启动脚本
