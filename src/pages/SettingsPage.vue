@@ -71,72 +71,43 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useTheme, useSettingsStore } from '../lib'
-import { invoke } from '@tauri-apps/api/core'
+import { useSettingsStore } from '../lib'
 
 const { locale } = useI18n()
-const { themeMode, setThemeMode } = useTheme()
 const settingsStore = useSettingsStore()
 
-const selectedLanguage = ref('zh-CN')
-const selectedTheme = ref('system')
-const settings = reactive({
-  language: 'zh-CN'
-})
+const selectedLanguage = ref(settingsStore.language)
+const selectedTheme = ref(settingsStore.themeMode)
 
-onMounted(async () => {
-  try {
-    const savedSettings = await invoke('get_settings')
-    settings.language = savedSettings.language
-    selectedLanguage.value = settings.language
-    locale.value = settings.language
-    
-    // 设置主题选择下拉框的初始值
-    selectedTheme.value = savedSettings.theme_mode.toLowerCase()
-    
-    // 检查自动启动状态
-    await settingsStore.checkAutoLaunchStatus()
-  } catch (error) {
-    console.error('Error loading settings:', error)
-  }
-})
+watch(
+  () => settingsStore.language,
+  (language) => {
+    selectedLanguage.value = language
+    locale.value = language
+  },
+  { immediate: true }
+)
 
-async function saveSettings() {
-  try {
-    const themeModeCap = selectedTheme.value.charAt(0).toUpperCase() + selectedTheme.value.slice(1)
-    
-    const settingsData = {
-      language: settings.language,
-      theme_mode: themeModeCap,
-      start_at_login: settingsStore.startAtLogin
-    }
-    
-    await invoke('save_settings', { settings: settingsData })
-  } catch (error) {
-    console.error('Error saving settings:', error)
-  }
-}
+watch(
+  () => settingsStore.themeMode,
+  (themeMode) => {
+    selectedTheme.value = themeMode
+  },
+  { immediate: true }
+)
 
 async function toggleStartAtLogin() {
-  // 使用 store 的方法设置自动启动
   await settingsStore.setAutoLaunch(!settingsStore.startAtLogin)
-  // 保存完整设置到本地
-  saveSettings()
 }
 
 async function changeLanguage() {
-  settings.language = selectedLanguage.value
-  settingsStore.language = selectedLanguage.value
-  locale.value = selectedLanguage.value
-  localStorage.setItem('app-locale', selectedLanguage.value)
-  await invoke('set_language', { language: selectedLanguage.value })
-  saveSettings()
+  await settingsStore.setLanguage(selectedLanguage.value)
 }
 
 async function changeTheme() {
-  setThemeMode(selectedTheme.value)
+  await settingsStore.setThemeMode(selectedTheme.value)
 }
 </script>
 
@@ -153,7 +124,7 @@ select {
 
 /* 修复下拉框选项在深色模式下的样式 */
 :deep(select option) {
-  background-color: var(--card-background);
-  color: var(--card-foreground);
+  background-color: hsl(var(--card));
+  color: hsl(var(--card-foreground));
 }
 </style>

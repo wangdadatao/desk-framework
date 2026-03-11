@@ -1,9 +1,15 @@
 import { createPinia } from 'pinia'
 import { defineStore } from 'pinia'
 import { invoke } from '@tauri-apps/api/core'
+import i18n from '../i18n'
 
 // 创建 Pinia 实例
 export const pinia = createPinia()
+
+function syncLanguage(language) {
+  localStorage.setItem('app-locale', language)
+  i18n.global.locale.value = language
+}
 
 /**
  * 应用设置存储
@@ -18,7 +24,9 @@ export const useSettingsStore = defineStore('settings', {
     themeMode: 'system', // 'light', 'dark', 'system'
     startAtLogin: false,
     loading: false,
-    isSystemDarkTheme: false
+    isSystemDarkTheme: false,
+    initialized: false,
+    systemThemeListenerReady: false
   }),
   
   getters: {
@@ -32,6 +40,30 @@ export const useSettingsStore = defineStore('settings', {
   },
   
   actions: {
+    setupSystemThemeListener() {
+      if (this.systemThemeListenerReady || typeof window === 'undefined' || !window.matchMedia) {
+        return
+      }
+
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+      const handleThemeChange = (event) => {
+        this.isSystemDarkTheme = event.matches
+        if (this.themeMode === 'system') {
+          this.applyTheme()
+        }
+      }
+
+      this.isSystemDarkTheme = mediaQuery.matches
+
+      if (mediaQuery.addEventListener) {
+        mediaQuery.addEventListener('change', handleThemeChange)
+      } else {
+        mediaQuery.addListener(handleThemeChange)
+      }
+
+      this.systemThemeListenerReady = true
+    },
+
     async loadSettings() {
       this.loading = true
       try {
@@ -48,7 +80,7 @@ export const useSettingsStore = defineStore('settings', {
           this.themeMode = localStorage.getItem('app-theme') || 'system'
           this.startAtLogin = false
         }
-        
+
         // 获取系统主题
         try {
           this.isSystemDarkTheme = await invoke('get_system_theme')
@@ -57,16 +89,20 @@ export const useSettingsStore = defineStore('settings', {
           // 使用媒体查询作为后备
           this.isSystemDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
         }
-        
+
         // 检查自动启动状态并同步 (可选，如果失败不终止)
         try {
           await this.checkAutoLaunchStatus()
         } catch (error) {
           console.warn('无法检查自动启动状态:', error)
         }
-        
+
+        syncLanguage(this.language)
+        this.setupSystemThemeListener()
+
         // 应用主题
         this.applyTheme()
+        this.initialized = true
       } catch (error) {
         console.error('Failed to load settings:', error)
       } finally {
@@ -85,10 +121,16 @@ export const useSettingsStore = defineStore('settings', {
       
       try {
         await invoke('save_settings', { settings })
+        syncLanguage(this.language)
         this.applyTheme()
       } catch (error) {
         console.error('Failed to save settings:', error)
       }
+    },
+
+    async setLanguage(language) {
+      this.language = language
+      await this.saveSettings()
     },
     
     async setThemeMode(mode) {
@@ -135,8 +177,8 @@ export const useSettingsStore = defineStore('settings', {
     // 设置自动启动
     async setAutoLaunch(enable) {
       try {
-        await invoke('set_autolaunch', { enable })
         this.startAtLogin = enable
+        await this.saveSettings()
       } catch (error) {
         console.error('Failed to set autolaunch:', error)
       }

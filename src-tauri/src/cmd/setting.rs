@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
-use tauri::{AppHandle, Runtime, Manager};
+use tauri::{AppHandle, Manager, Runtime, Theme, Window};
 use tauri_plugin_autostart::ManagerExt;
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
@@ -100,38 +100,12 @@ pub fn set_theme_mode<R: Runtime>(app: AppHandle<R>, theme_mode: ThemeMode) -> R
 }
 
 #[tauri::command]
-pub fn get_system_theme() -> Result<bool, String> {
-    #[cfg(target_os = "windows")]
-    {
-        use winreg::enums::*;
-        use winreg::RegKey;
-        
-        let hkcu = RegKey::predef(HKEY_CURRENT_USER);
-        match hkcu.open_subkey("Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize") {
-            Ok(key) => {
-                match key.get_value::<u32, _>("AppsUseLightTheme") {
-                    Ok(value) => Ok(value == 0), // 0表示暗色主题
-                    Err(_) => Ok(false) // 默认不是暗色
-                }
-            },
-            Err(_) => Ok(false) // 无法读取则默认不是暗色
-        }
-    }
-    
-    #[cfg(target_os = "macos")]
-    {
-        use chrono::{Local, Timelike};
-        
-        let hour = Local::now().hour();
-        Ok(hour < 6 || hour > 18) // 晚上6点到早上6点默认为暗色主题
-    }
-    
-    #[cfg(not(any(target_os = "windows", target_os = "macos")))]
-    {
-        use chrono::{Local, Timelike};
-        
-        let hour = Local::now().hour();
-        Ok(hour < 6 || hour > 18) // 晚上6点到早上6点默认为暗色主题
+pub fn get_system_theme<R: Runtime>(window: Window<R>) -> Result<bool, String> {
+    match window.theme() {
+        Ok(Theme::Dark) => Ok(true),
+        Ok(Theme::Light) => Ok(false),
+        Ok(_) => Ok(false),
+        Err(e) => Err(format!("Failed to get system theme: {}", e)),
     }
 }
 

@@ -21,35 +21,34 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { invoke } from '@tauri-apps/api/core';
-import { open } from '@tauri-apps/plugin-dialog';
+import { ref, onMounted } from 'vue'
+import { invoke } from '@tauri-apps/api/core'
+import { message } from '@tauri-apps/plugin-dialog'
 
 // 简化组件，不再依赖 Tauri 特定 API
-const version = ref('1.0.0');
-const osInfo = ref('');
+const version = ref('1.0.0')
+const osInfo = ref('')
 
 onMounted(async () => {
   try {
     // 获取操作系统信息
-    const info = await invoke('get_os_info');
-    osInfo.value = info.name || 'Unknown';
+    const info = await invoke('get_os_info')
+    osInfo.value = info.name || 'Unknown'
   } catch (error) {
-    console.error('无法获取系统信息:', error);
-    osInfo.value = 'Unknown';
+    console.error('无法获取系统信息:', error)
+    osInfo.value = 'Unknown'
   }
-});
+})
 
 async function showDialog() {
   try {
-    await open({
+    await message('这是一个来自 Tauri 的消息!', {
       title: '信息',
-      message: '这是一个来自 Tauri 的消息!',
-      type: 'info'
-    });
+      kind: 'info'
+    })
   } catch (error) {
-    console.error('无法显示对话框:', error);
-    alert('这是一个消息 (使用浏览器原生对话框)');
+    console.error('无法显示对话框:', error)
+    alert('这是一个消息 (使用浏览器原生对话框)')
   }
 }
 </script>
